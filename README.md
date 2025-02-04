@@ -67,3 +67,22 @@ Image Storage: A secure cloud-based or local server solution to store photograph
 9. Conclusion
 
 The proposed software system will greatly enhance the ability of the Knox County Historical Society to organize, store, and retrieve historical photographs and negatives. By offering a comprehensive database that is both secure and accessible, this system will not only improve internal workflows but also enable the public to engage with and explore Knox County’s rich history. Through careful planning, development, and collaboration with the KCHS, this project will be a valuable asset for both current and future generations interested in the history of the region.
+
+MEETING NOTES:
+- Sort by last name, occupation, etc
+- 35mm negative
+    - Ex. “4/20/02  — Carnival”
+    - Collections of photos
+    - We have the newspapers too
+- Fields:
+    - Primary:
+        - Date
+        - Title
+        - Description
+    - Secondary:
+        - Box labels (type photos, category, year)
+        - Description
+        - People’s names, occupations
+        - Photo type
+        - Dimensions
+- PastPerfect integration
