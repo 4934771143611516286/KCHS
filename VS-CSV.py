@@ -8,10 +8,12 @@ def process_csv(filename):
     exampleFile.close()
     return exampleData
 
-filepath="Desktop/MVHS/Tester.csv"
+#replace filepaths with wherever you're storing these files.
+testerFilepath="Desktop/MVHS/Tester.csv"
+htmlFilepath=""Desktop/MVHS/KCHS Image Display.html"
 
-MyDB=process_csv("Desktop/MVHS/Tester.csv")
-print(MyDB)
+MyDB=process_csv(testerFilepath)
+#print(MyDB)
 
 def dbCategories(file_path):
     try:
@@ -35,7 +37,6 @@ def add_row_to_csv(file_path):
     for i in range(addedRows):
         with open(file_path, mode='a', newline='') as file:
             csv_writer = csv.writer(file)
-            # Ask the user for input data
             row=[]
             for j in columns:
                 entry = input(f"Enter your image's {j}: ")
@@ -46,5 +47,21 @@ def add_row_to_csv(file_path):
             csv_writer.writerow(row)
             print("New row added successfully!")
 
+#function to create html site to display photo and information
+def createHTMLforPhoto(HTMLbase,picTitle,picDate,picDesc,picImgLink,picID):
+    oldHTML= open(HTMLbase, 'r', encoding='utf-8')
+    newtext = oldHTML.read()
+    newtext=newtext.replace("[Photo Title]",picTitle)
+    newtext=newtext.replace("[Date Captured]",picDate)
+    newtext=newtext.replace("[Description]", picDesc)
+    newtext=newtext.replace("[Link]",picImgLink)
+    newtext=newtext.replace("[Image Title + ID]",str(picTitle+picID))
+    oldHTML.close()
+    newHTML=open(str("Desktop/MVHS/KCHS-images-"+picTitle+"-"+picID+".html"),'w',encoding='utf-8')
+    newHTML.write(newtext)
+    newHTML.close()
+    print("done!")
+#add_row_to_csv(testerFilepath)
+createHTMLforPhoto(htmlFilepath,"Testing","03/18/25","This is a testing description.","https://www.knoxhistory.org/templates/rt_studius/custom/images/headers/81623446_2819543581605978_5690387876819238912_n.jpg","12345")
 
-add_row_to_csv(filepath)
+    
