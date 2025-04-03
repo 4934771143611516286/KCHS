@@ -8,12 +8,11 @@ def process_csv(filename):
     exampleFile.close()
     return exampleData
 
-#replace filepaths with wherever you're storing these files.
-testerFilepath="Desktop/MVHS/Tester.csv"
-htmlFilepath=""Desktop/MVHS/KCHS Image Display.html"
+csvFilepath="Tester.csv"
+htmlFilepath="KCHS Image Display.html"
 
-MyDB=process_csv(testerFilepath)
-#print(MyDB)
+MyDB=process_csv(csvFilepath)
+print(MyDB)
 
 def dbCategories(file_path):
     try:
@@ -45,7 +44,25 @@ def add_row_to_csv(file_path):
             print(row)
             # Write the new row to the CSV file
             csv_writer.writerow(row)
-            print("New row added successfully!")
+            print("New photo added successfully!")
+
+# Function to remove a row from CSV file based on ID
+def remove_row_from_csv(input_file):
+    removedID=input("Input the photo IDs you want to remove, separating each with a comma:  ")
+    #creates list of IDs
+    removedID.split(",")
+    rows_to_keep = []
+    with open(input_file, mode='r', newline='') as infile:
+        reader = csv.reader(infile)
+        for row in reader:
+            # Check if this row matches the ID and should be removed
+            if row[0] not in removedID:
+                rows_to_keep.append(row)
+    # Rewrite CSV file with the filtered rows
+    with open(input_file, mode='w', newline='') as outfile:
+        writer = csv.writer(outfile)
+        writer.writerows(rows_to_keep)
+    print("Photos removed successfully!")
 
 #function to create html site to display photo and information
 def createHTMLforPhoto(HTMLbase,picTitle,picDate,picDesc,picImgLink,picID):
@@ -57,11 +74,19 @@ def createHTMLforPhoto(HTMLbase,picTitle,picDate,picDesc,picImgLink,picID):
     newtext=newtext.replace("[Link]",picImgLink)
     newtext=newtext.replace("[Image Title + ID]",str(picTitle+picID))
     oldHTML.close()
-    newHTML=open(str("Desktop/MVHS/KCHS-images-"+picTitle+"-"+picID+".html"),'w',encoding='utf-8')
+    newHTML=open(str("KCHS-images-"+picTitle+"-"+picID+".html"),'w',encoding='utf-8')
     newHTML.write(newtext)
     newHTML.close()
     print("done!")
-#add_row_to_csv(testerFilepath)
-createHTMLforPhoto(htmlFilepath,"Testing","03/18/25","This is a testing description.","https://www.knoxhistory.org/templates/rt_studius/custom/images/headers/81623446_2819543581605978_5690387876819238912_n.jpg","12345")
 
-    
+
+testing=input("\n \n Input 1 to add a row to the csv, 2 to remove, and 3 to create an html.  ")
+if testing=="1":
+    add_row_to_csv(csvFilepath)
+elif testing=="2":
+    remove_row_from_csv(csvFilepath)
+elif testing=="3":
+    createHTMLforPhoto(htmlFilepath,"Testing","03/18/25","This is a testing description.","https://www.knoxhistory.org/templates/rt_studius/custom/images/headers/81623446_2819543581605978_5690387876819238912_n.jpg","12345")
+else:
+    print("No effect, try again.")
+    testing=input("\n \n Input 1 to add a row to the csv, 2 to remove, and 3 to create an html.  ")
