@@ -81,6 +81,8 @@ MEETING NOTES:
         - Description
     - Secondary:
         - Box labels (type photos, category, year)
+
+  The SQL script is run through MySQL workbench, but will be integrated in later versions.
         - Description
         - People’s names, occupations
         - Photo type
