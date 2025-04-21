@@ -88,3 +88,5 @@ MEETING NOTES:
         - Photo type
         - Dimensions
 - PastPerfect integration
+
+The Python scripts that add and remove entries directly from the MySQL database require Pip to be used to install mysql.connector. The scripts do not work otherwise.
