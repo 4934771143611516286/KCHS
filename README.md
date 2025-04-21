@@ -88,3 +88,5 @@ MEETING NOTES:
         - Photo type
         - Dimensions
 - PastPerfect integration
+
+The "glorpfromdatabasemysql.py" and "import mysql.py" are the most up-to-date scripts for the project. They remove and add entries to the database respectively. They both require that you have mysql.connector for Python installed to function in addition to a locally hosted MySQL database.
