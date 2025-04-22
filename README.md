@@ -78,11 +78,14 @@ MEETING NOTES:
     - We have the newspapers too
 - Fields:
     - Primary:
-        - Date
-        - Title
-        - Description
+        -ID
+        -Date Taken
+        -Title
+        -Description
+        -Link
+    -   -Date Added
     - Secondary:
-        - Box labels (type photos, category, year)
+        -Box labels (type photos, category, year)
 
   The SQL script is run through MySQL workbench, but will be integrated in later versions.
         - Description
@@ -90,5 +93,3 @@ MEETING NOTES:
         - Photo type
         - Dimensions
 - PastPerfect integration
-
-The Python script that add and remove entries and create HTML files from the MySQL database require Pip to be used to install mysql.connector. The script does not work otherwise.
