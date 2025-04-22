@@ -1,11 +1,11 @@
 USE importtestdb;
 CREATE TABLE IF NOT EXISTS imageimporttable(
 	ID INTEGER,
-    dateTaken DATE,
+    dateTaken TEXT,
     Title TEXT,
     Link TEXT,
     Descript TEXT,
-    dateAdded DATE,
+    dateAdded TEXT,
     PRIMARY KEY (ID)
 );
 
