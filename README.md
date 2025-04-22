@@ -1,3 +1,5 @@
+The Python script that add and remove entries and create HTML files from the MySQL database require Pip to be used to install mysql.connector. The script does not work otherwise.
+
 # KCHS
 Photo Database Proposal for the Knox County Historical Society
 
@@ -89,4 +91,4 @@ MEETING NOTES:
         - Dimensions
 - PastPerfect integration
 
-The Python scripts that add and remove entries directly from the MySQL database require Pip to be used to install mysql.connector. The scripts do not work otherwise.
+The Python script that add and remove entries and create HTML files from the MySQL database require Pip to be used to install mysql.connector. The script does not work otherwise.
