@@ -43,5 +43,4 @@ def generate_html_from_database(output_folder="GeneratedHTMLs"):
     cursor.close()
     connection.close()
 
-# Call it!
 generate_html_from_database()
