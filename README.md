@@ -1,4 +1,4 @@
-The Python script that add and remove entries and create HTML files from the MySQL database require Pip to be used to install mysql.connector. The script does not work otherwise.
+The Python script that adds and removes entries and creates HTML files from the MySQL database requires mysql.connector, which is installed using Pip, in addition to a locally-hosted MySQL server with a database. The script will not work otherwise.
 
 # KCHS
 Photo Database Proposal for the Knox County Historical Society
