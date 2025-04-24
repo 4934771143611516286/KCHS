@@ -55,6 +55,33 @@ def login():
     
     return render_template('login.html')
 
+@app.route('/photos', methods=['GET', 'POST'])
+def photos():
+    if 'username' not in session:
+        return redirect('/login')
+    
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    if request.method == 'POST':
+        title = request.form['title']
+        date_taken = request.form['dateTaken']
+        link = request.form['link']
+        descript = request.form['descript']
+
+        cursor.execute(
+            "INSERT INTO imageimporttable (dateTaken, Title, Link, Descript, dateAdded) VALUES (%s, %s, %s, %s, NOW())",
+            (date_taken, title, link, descript)
+        )
+        db.commit()
+
+    cursor.execute("SELECT * FROM imageimporttable ORDER BY ID DESC")
+    photos = cursor.fetchall()
+    db.close()
+
+    return render_template('photos.html', photos=photos)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 
