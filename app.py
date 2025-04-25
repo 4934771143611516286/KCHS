@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, request, redirect, session, send_file
 import mysql.connector
+import os
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Replace with a strong secret key
+app.secret_key = 'your_secret_key'
 
 # Connect to MySQL database
 db = mysql.connector.connect(
@@ -28,11 +29,11 @@ def login():
 
         if user:
             session['user'] = username
-            return f"Welcome, {username}! You are now logged in."
+            return f"<h2>Welcome, {username}!</h2><p><a href='/logout'>Logout</a></p>"
         else:
-            return "Invalid username or password. <a href='/login'>Try again</a>."
+            return "<h2>Invalid login</h2><p><a href='/login'>Try again</a></p>"
 
-    return render_template('login.html')
+    return send_file('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -40,18 +41,15 @@ def register():
         username = request.form['username']
         password = request.form['password']
 
-        # Check if username exists
         cursor.execute("SELECT * FROM logininfotable WHERE username=%s", (username,))
         if cursor.fetchone():
-            return "Username already taken. <a href='/register'>Try another</a>."
+            return "<h2>Username already exists</h2><p><a href='/register'>Try again</a></p>"
 
-        # Insert new user
         cursor.execute("INSERT INTO logininfotable (username, passcode) VALUES (%s, %s)", (username, password))
         db.commit()
+        return "<h2>Registration successful!</h2><p><a href='/login'>Login here</a></p>"
 
-        return "Registration successful. <a href='/login'>Login here</a>."
-
-    return render_template('register.html')
+    return send_file('register.html')
 
 @app.route('/logout')
 def logout():
