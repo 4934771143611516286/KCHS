@@ -1,87 +1,63 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, render_template, request, redirect, session
 import mysql.connector
-from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
-app.secret_key = 'supersecretkey'  # Needed for sessions
-bcrypt = Bcrypt(app)  # Initialize Flask-Bcrypt
+app.secret_key = 'your_secret_key'  # Replace with a strong secret key
 
-# DB connection
-def get_db():
-    return mysql.connector.connect(
-        host="localhost",
-        user="your_db_user",
-        password="your_db_password",
-        database="your_db_name"
-    )
+# Connect to MySQL database
+db = mysql.connector.connect(
+    host="localhost",
+    user="your_mysql_username",
+    password="your_mysql_password",
+    database="importtestdb"
+)
+cursor = db.cursor()
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        
-        # Hash the password
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-
-        # Insert into database
-        db = get_db()
-        cursor = db.cursor(dictionary=True)
-        cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, hashed_password))
-        db.commit()
-        db.close()
-
-        return redirect('/login')  # Redirect to login page after successful registration
-
-    return render_template('register.html')
+@app.route('/')
+def home():
+    return redirect('/login')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        
-        db = get_db()
-        cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
-        user = cursor.fetchone()
-        db.close()
 
-        if user and bcrypt.check_password_hash(user['password'], password):
-            session['username'] = user['username']
-            return redirect('/photos')
+        cursor.execute("SELECT * FROM logininfotable WHERE username=%s AND passcode=%s", (username, password))
+        user = cursor.fetchone()
+
+        if user:
+            session['user'] = username
+            return f"Welcome, {username}! You are now logged in."
         else:
             return "Invalid username or password. <a href='/login'>Try again</a>."
-    
+
     return render_template('login.html')
 
-@app.route('/photos', methods=['GET', 'POST'])
-def photos():
-    if 'username' not in session:
-        return redirect('/login')
-    
-    db = get_db()
-    cursor = db.cursor(dictionary=True)
-
+@app.route('/register', methods=['GET', 'POST'])
+def register():
     if request.method == 'POST':
-        title = request.form['title']
-        date_taken = request.form['dateTaken']
-        link = request.form['link']
-        descript = request.form['descript']
+        username = request.form['username']
+        password = request.form['password']
 
-        cursor.execute(
-            "INSERT INTO imageimporttable (dateTaken, Title, Link, Descript, dateAdded) VALUES (%s, %s, %s, %s, NOW())",
-            (date_taken, title, link, descript)
-        )
+        # Check if username exists
+        cursor.execute("SELECT * FROM logininfotable WHERE username=%s", (username,))
+        if cursor.fetchone():
+            return "Username already taken. <a href='/register'>Try another</a>."
+
+        # Insert new user
+        cursor.execute("INSERT INTO logininfotable (username, passcode) VALUES (%s, %s)", (username, password))
         db.commit()
 
-    cursor.execute("SELECT * FROM imageimporttable ORDER BY ID DESC")
-    photos = cursor.fetchall()
-    db.close()
+        return "Registration successful. <a href='/login'>Login here</a>."
 
-    return render_template('photos.html', photos=photos)
+    return render_template('register.html')
 
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect('/login')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
 
