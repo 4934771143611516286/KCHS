@@ -61,6 +61,19 @@
             background-color: #d1ecf1;
             color: #0c5460;
         }
+        .spinner {
+            border: 6px solid #f3f3f3; /* Light gray */
+            border-top: 6px solid #333; /* Dark */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -82,16 +95,29 @@
             <input type="password" name="password" placeholder="Password" required><br>
             <input type="submit" value="Register">
         </form>
+
         <p>Already have an account? <a href="/login">Login here</a>.</p>
+
+        <!-- Spinner for loading -->
+        <div id="loading-spinner" style="display: none; margin-top: 20px;">
+            <div class="spinner"></div>
+            <p style="color: #333; margin-top: 10px;">Loading... Please wait.</p>
+        </div>
     </div>
 
+    <!-- Smarter Redirect with Spinner -->
     <script>
-        const redirectUrl = "{{ session.get('redirect_url') }}";
-        if (redirectUrl) {
-            setTimeout(() => {
-                window.location.href = redirectUrl;
-            }, 2000);
-        }
+        {% if session.get('redirect_url') %}
+            document.addEventListener('DOMContentLoaded', function() {
+                const spinnerDiv = document.getElementById('loading-spinner');
+                if (spinnerDiv) {
+                    spinnerDiv.style.display = 'block';
+                }
+                setTimeout(() => {
+                    window.location.href = "{{ session.get('redirect_url') }}";
+                }, 2000);
+            });
+        {% endif %}
     </script>
 </body>
 </html>
