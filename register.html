@@ -19,6 +19,8 @@
             display: inline-block;
             color: #000;
             box-shadow: 0 0 12px rgba(0,0,0,0.3);
+            z-index: 1;
+            position: relative;
         }
         input[type="text"], input[type="password"] {
             padding: 10px;
@@ -44,6 +46,7 @@
             width: 80%;
             border-radius: 8px;
             font-weight: bold;
+            transition: opacity 1s ease-out; /* 🚀 Fade smoothly */
         }
         .flash.success {
             background-color: #d4edda;
@@ -67,6 +70,7 @@
     <div class="register-box">
         <h2>Create an Account</h2>
 
+        <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             <div>
@@ -77,6 +81,7 @@
           {% endif %}
         {% endwith %}
 
+        <!-- Register Form -->
         <form method="POST" action="/register">
             <input type="text" name="username" placeholder="Username" required><br>
             <input type="password" name="password" placeholder="Password" required><br>
@@ -85,5 +90,20 @@
 
         <p>Already have an account? <a href="/login">Login here</a>.</p>
     </div>
+
+    <!-- Auto-Hide Flash Messages Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const flashMessages = document.querySelectorAll('.flash');
+                flashMessages.forEach(function(flash) {
+                    flash.style.opacity = '0'; // Fade out
+                    setTimeout(function() {
+                        flash.style.display = 'none'; // Remove after fade
+                    }, 1000);
+                });
+            }, 4000); // After 4 seconds
+        });
+    </script>
 </body>
 </html>
