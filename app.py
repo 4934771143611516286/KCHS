@@ -3,25 +3,29 @@ import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'  # Change this to a strong secret key!
+app.secret_key = 'your_secret_key_here'  # 🛠 CHANGE this to a strong secret key!
 
 # Setup database connection
 db = mysql.connector.connect(
     host="localhost",
-    user="your_db_username",   # change to your database username
-    password="your_db_password",   # change to your database password
-    database="your_db_name"    # change to your database name
+    user="root",              # 🛠 Your MySQL username
+    password="",              # 🛠 Your MySQL password (empty if none)
+    database="kchsdb"          # 🛠 Your database name
 )
 cursor = db.cursor(dictionary=True)
 
-# Home page
+# Home - redirect to login
 @app.route('/')
 def home():
     return redirect(url_for('login'))
 
-# Register route
+# Register Route
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if session.get('user_id'):
+        flash('You are already registered and logged in.', 'info')
+        return redirect(url_for('photos'))
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -36,14 +40,18 @@ def register():
         cursor.execute("INSERT INTO users (username, password_hash) VALUES (%s, %s)", (username, hashed_password))
         db.commit()
 
-        flash('Registration successful! Redirecting to login...', 'success')
-        session['redirect_url'] = url_for('login')
-        return redirect(url_for('register'))
+        flash('Registration successful! Please login.', 'success')
+        return redirect(url_for('login'))
+
     return render_template('register.html')
 
-# Login route
+# Login Route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if session.get('user_id'):
+        flash('You are already logged in.', 'info')
+        return redirect(url_for('photos'))
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -59,22 +67,22 @@ def login():
         else:
             flash('Invalid username or password.', 'danger')
             return redirect(url_for('login'))
+
+    session.pop('redirect_url', None)  # 🛠 Clean up redirect_url when just visiting login page
     return render_template('login.html')
 
-# Logout route
+# Logout Route
 @app.route('/logout')
 def logout():
     session.clear()
     flash('You have been logged out. Redirecting to login...', 'info')
-    session['redirect_url'] = url_for('login')
     return redirect(url_for('login'))
 
-# Photos gallery and upload
+# Photos Gallery and Upload Route
 @app.route('/photos', methods=['GET', 'POST'])
 def photos():
-    if 'user_id' not in session:
-        flash('Please log in to add photos.', 'warning')
-        session['redirect_url'] = url_for('photos')
+    if not session.get('user_id'):
+        flash('You must log in to access the photo gallery.', 'warning')
         return redirect(url_for('login'))
 
     if request.method == 'POST':
@@ -83,14 +91,17 @@ def photos():
         link = request.form['link']
         description = request.form['descript']
 
-        cursor.execute("INSERT INTO images (Title, dateTaken, Link, Descript) VALUES (%s, %s, %s, %s)",
-                       (title, date_taken, link, description))
+        cursor.execute(
+            "INSERT INTO images (Title, dateTaken, Link, Descript) VALUES (%s, %s, %s, %s)",
+            (title, date_taken, link, description)
+        )
         db.commit()
         flash('Photo added successfully!', 'success')
 
     cursor.execute("SELECT * FROM images")
     photos = cursor.fetchall()
-    return render_template('photos.html', photos=photos)
+    return render_template('photos.html', photos=photos, username=session.get('username'))
 
+# Run the app
 if __name__ == '__main__':
     app.run(debug=True)
