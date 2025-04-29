@@ -32,29 +32,6 @@
         a.logout-button:hover {
             background-color: #d32f2f;
         }
-        .flash {
-            padding: 10px;
-            margin: 20px auto;
-            width: 80%;
-            border-radius: 8px;
-            font-weight: bold;
-        }
-        .flash.success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .flash.danger {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .flash.warning {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-        .flash.info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
         .gallery {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -67,13 +44,14 @@
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            position: relative;
         }
         img {
             max-width: 100%;
             height: auto;
             border-radius: 8px;
         }
-        form {
+        form.upload-form {
             margin-top: 40px;
             background: #ECF2FD;
             padding: 20px;
@@ -97,31 +75,33 @@
         input[type="submit"]:hover {
             background-color: #555;
         }
+        .delete-button {
+            margin-top: 10px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .delete-button:hover {
+            background-color: #d32f2f;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Flash messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div>
-        {% for category, message in messages %}
-          <div class="flash {{ category }}">{{ message }}</div>
-        {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
-
-    <!-- Top Welcome + Logout -->
+    <!-- Welcome + Logout Bar -->
     <div class="top-bar">
         <h2>Welcome, {{ username }}!</h2>
         <a href="/logout" class="logout-button">Logout</a>
     </div>
 
-    <h1>Welcome to the Knox History Photo Gallery</h1>
+    <h1>Knox History Photo Gallery</h1>
 
-    <!-- Add New Photo Form -->
-    <form method="POST" action="/photos">
+    <!-- Upload New Photo Form -->
+    <form method="POST" action="/photos" class="upload-form">
         <h3>Add New Photo</h3>
         <input type="text" name="title" placeholder="Photo Title" required>
         <input type="date" name="dateTaken" required>
@@ -138,6 +118,12 @@
             <p><strong>Date:</strong> {{ photo.dateTaken }}</p>
             <p>{{ photo.Descript }}</p>
             <img src="{{ photo.Link }}" alt="{{ photo.Title }}">
+
+            <!-- Delete Photo Button -->
+            <form method="POST" action="/delete_photo">
+                <input type="hidden" name="photo_id" value="{{ photo.id }}">
+                <input type="submit" value="Delete Photo" class="delete-button">
+            </form>
         </div>
         {% endfor %}
     </div>
