@@ -1,25 +1,39 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import mysql.connector
+import os
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'  # 🛠 CHANGE this to a strong secret key!
+app.secret_key = 'your_secret_key_here'  # Replace with a real secret key
 
 # Setup database connection
 db = mysql.connector.connect(
     host="localhost",
-    user="root",              # 🛠 Your MySQL username
-    password="Shlshz24y.",              # 🛠 Your MySQL password (empty if none)
-    database="kchsdb"          # 🛠 Your database name
+    user="root",
+    password="your_db_password",  # Replace with your actual MySQL password
+    database="your_db_name"
 )
 cursor = db.cursor(dictionary=True)
 
-# Home - redirect to login
+# File upload config
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Ensure upload directory exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 @app.route('/')
 def home():
+    if session.get('user_id'):
+        flash('You are already logged in.', 'info')
+        return redirect(url_for('photos'))
     return redirect(url_for('login'))
 
-# Register Route
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if session.get('user_id'):
@@ -45,7 +59,6 @@ def register():
 
     return render_template('register.html')
 
-# Login Route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if session.get('user_id'):
@@ -68,17 +81,15 @@ def login():
             flash('Invalid username or password.', 'danger')
             return redirect(url_for('login'))
 
-    session.pop('redirect_url', None)  # 🛠 Clean up redirect_url when just visiting login page
+    session.pop('redirect_url', None)
     return render_template('login.html')
 
-# Logout Route
 @app.route('/logout')
 def logout():
     session.clear()
     flash('You have been logged out. Redirecting to login...', 'info')
     return redirect(url_for('login'))
 
-# Photos Gallery and Upload Route
 @app.route('/photos', methods=['GET', 'POST'])
 def photos():
     if not session.get('user_id'):
@@ -88,8 +99,19 @@ def photos():
     if request.method == 'POST':
         title = request.form['title']
         date_taken = request.form['dateTaken']
-        link = request.form['link']
         description = request.form['descript']
+        file = request.files.get('photo_file')
+        link = request.form.get('link')
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            link = f"/static/uploads/{filename}"
+
+        if not link:
+            flash('Please provide an image link or upload a file.', 'danger')
+            return redirect(url_for('photos'))
 
         cursor.execute(
             "INSERT INTO images (Title, dateTaken, Link, Descript) VALUES (%s, %s, %s, %s)",
@@ -109,14 +131,11 @@ def delete_photo():
         return redirect(url_for('login'))
 
     photo_id = request.form['photo_id']
-
     cursor.execute("DELETE FROM images WHERE id = %s", (photo_id,))
     db.commit()
 
     flash('Photo deleted successfully!', 'success')
     return redirect(url_for('photos'))
 
-
-# Run the app
 if __name__ == '__main__':
     app.run(debug=True)
