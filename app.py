@@ -9,7 +9,7 @@ app.secret_key = 'your_secret_key_here'  # 🛠 CHANGE this to a strong secret k
 db = mysql.connector.connect(
     host="localhost",
     user="root",              # 🛠 Your MySQL username
-    password="",              # 🛠 Your MySQL password (empty if none)
+    password="Shlshz24y.",              # 🛠 Your MySQL password (empty if none)
     database="kchsdb"          # 🛠 Your database name
 )
 cursor = db.cursor(dictionary=True)
@@ -101,6 +101,21 @@ def photos():
     cursor.execute("SELECT * FROM images")
     photos = cursor.fetchall()
     return render_template('photos.html', photos=photos, username=session.get('username'))
+
+@app.route('/delete_photo', methods=['POST'])
+def delete_photo():
+    if not session.get('user_id'):
+        flash('You must be logged in to delete photos.', 'warning')
+        return redirect(url_for('login'))
+
+    photo_id = request.form['photo_id']
+
+    cursor.execute("DELETE FROM images WHERE id = %s", (photo_id,))
+    db.commit()
+
+    flash('Photo deleted successfully!', 'success')
+    return redirect(url_for('photos'))
+
 
 # Run the app
 if __name__ == '__main__':
