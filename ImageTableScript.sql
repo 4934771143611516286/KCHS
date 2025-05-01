@@ -1,11 +1,16 @@
-USE importtestdb;
-CREATE TABLE IF NOT EXISTS imageimporttable(
-	ID INTEGER,
-    dateTaken TEXT,
-    Title TEXT,
-    Link TEXT,
-    Descript TEXT,
-    dateAdded TEXT,
-    PRIMARY KEY (ID)
+CREATE DATABASE kchsdb;
+USE kchsdb;
+
+CREATE TABLE users (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	username VARCHAR(150) UNIQUE NOT NULL,
+	password_hash VARCHAR(200) NOT NULL
 );
-SELECT * FROM imageimporttable;
+
+CREATE TABLE images (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	Title VARCHAR(255) NOT NULL,
+	dateTaken DATE,
+	Link TEXT,
+ 	Descript TEXT
+);
