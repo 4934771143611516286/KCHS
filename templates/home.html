@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Image Search Results </title>
+    <style>
+        body {
+            font-family: Geneva, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #091831;
+        }
+        .logo {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ECF2FD;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ECF2FD;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .photo-card {
+            background: #ECF2FD;
+            color: #000;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        img {
+            max-width: 900px;
+            height: auto;
+            border-radius: 8px;
+        }
+        h1, h3, p {
+            color: #333;
+        }
+        .carousel-buttons {
+            margin-top: 20px;
+        }
+        .carousel-buttons button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 1em;
+            color:#091831;
+            background-color: #ECF2FD;
+            cursor: pointer;
+        }
+        #image-grid img:hover {
+        opacity: 0.8;
+        transform: scale(1.05);
+        transition: all 0.2s ease;
+        }
+
+    </style>
+</head>
+<script>
+    const images = {{ photos | tojson }};
+    let currentIndex = 0;
+
+    function showImage(index) {
+        const image = images[index];
+        document.getElementById("image-title").textContent = image.Title;
+        document.getElementById("image-date").textContent = image.dateTaken;
+        document.getElementById("image-description").textContent = image.Descript;
+        const imgEl = document.getElementById("image-link");
+        imgEl.src = image.Link;
+        imgEl.alt = image.Title;
+    }
+
+    function nextImage() {
+        currentIndex = (currentIndex + 1) % images.length;
+        showImage(currentIndex);
+    }
+
+    function prevImage() {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        showImage(currentIndex);
+    }
+
+    // Initialize carousel on page load
+    window.onload = function() {
+        if (images.length > 0) {
+            showImage(currentIndex);
+        } else {
+            document.getElementById("carousel").innerHTML = "<p>No images available.</p>";
+        }
+    };
+    let filteredImages = [...images];  // Start with all images
+
+    function filterImages() {
+        const query = document.getElementById("search-bar").value.toLowerCase();
+
+        // Filter images by title or description
+        filteredImages = images.filter(img =>
+            img.Title.toLowerCase().includes(query) ||
+            img.Descript.toLowerCase().includes(query)
+        );
+
+        currentIndex = 0;
+
+        if (filteredImages.length > 0) {
+            showFilteredImage(currentIndex);
+        } else {
+            document.getElementById("carousel").innerHTML = "<p>No results found.</p>";
+        }
+    }
+
+    function showFilteredImage(index) {
+        const image = filteredImages[index];
+        document.getElementById("carousel").innerHTML = `
+            <h1 id="image-title">${image.Title}</h1>
+            <p><strong>Date:</strong> <span id="image-date">${image.dateTaken}</span></p>
+            <p id="image-description">${image.Descript}</p>
+            <img id="image-link" src="${image.Link}" alt="${image.Descript}" width="800px">
+            <div class="carousel-buttons">
+                <button onclick="prevFilteredImage()">Previous</button>
+                <button onclick="nextFilteredImage()">Next</button>
+            </div>
+        `;
+    }
+
+    function nextFilteredImage() {
+        currentIndex = (currentIndex + 1) % filteredImages.length;
+        showFilteredImage(currentIndex);
+    }
+
+    function prevFilteredImage() {
+        currentIndex = (currentIndex - 1 + filteredImages.length) % filteredImages.length;
+        showFilteredImage(currentIndex);
+    }
+
+    // Trigger search on input
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("search-bar").addEventListener("input", filterImages);
+        showFilteredImage(currentIndex);  // Load initially
+    });
+    function createImageGrid() {
+    const grid = document.getElementById("image-grid");
+    grid.innerHTML = ""; // Clear existing
+
+    filteredImages.forEach((img, idx) => {
+        const thumb = document.createElement("div");
+        thumb.style.width = "100px";
+        thumb.style.height = "150px";
+        thumb.style.cursor = "pointer";
+        thumb.style.textAlign = "left";
+        thumb.style.background = "#fff";
+        thumb.style.borderRadius = "8px";
+        thumb.style.padding = "10px";
+        thumb.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+
+        thumb.innerHTML = `
+            <img src="${img.Link}" alt="${img.Title}" style="width: 100%; border-radius: 6px;">
+            <p style="margin-top: 8px; font-size: 0.9em;">${img.Title}</p>
+        `;
+
+        thumb.onclick = () => {
+            currentIndex = idx;
+            showImage(currentIndex);
+        };
+
+        grid.appendChild(thumb);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    createImageGrid();
+});
+
+
+</script>
+<body>
+
+
+<div class="logo">
+    <a href='https://www.knoxhistory.org' target='_blank'>
+        <img src='https://www.knoxhistory.org/templates/rt_studius/custom/images/logo.png' alt='Knox History Logo'>
+    </a>
+</div>
+<div style="margin: 20px auto; max-width: 500px;">
+    <input id="search-bar" type="text" placeholder="Search for images" style="width: 100%; padding: 10px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc;">
+</div>
+    <div id="carousel" class="photo-card">
+        <h1 id="image-title"></h1>
+        <p><strong>Date:</strong> <span id="image-date"></span></p>
+        <p id="image-description"></p>
+        <img id="image-link" src="" alt="">
+        <div class="carousel-buttons">
+            <button onclick="prevImage()">Previous</button>
+            <button onclick="nextImage()">Next</button>
+        </div>
+    </div>
+    <div id="image-grid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 40px;">
+        <!-- Grid items inserted dynamically -->
+    </div>
+    <div style="text-align: right; margin: 20px;">
+        <a href="/login" style="padding: 10px 20px; background-color: #091831; color: white; text-decoration: none; border-radius: 5px;">
+            Login
+        </a>
+    </div>
+</body>
+</html>
