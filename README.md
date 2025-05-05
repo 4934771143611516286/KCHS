@@ -9,6 +9,7 @@ KCHS Project - How to Run the Login System
      /KCHS_project/
      ├── app.py
      ├── templates/
+         ├── home.html
          ├── login.html
          ├── register.html
          ├── photos.html
