@@ -14,3 +14,11 @@ CREATE TABLE images (
 	Link TEXT,
  	Descript TEXT
 );
+
+INSERT INTO users (username, passcode)
+VALUES ('Username','Passphrase'); -- Switch these with the username and password of the new user.
+
+SELECT * FROM users; -- Displays all user information
+
+DROP TABLE users; -- Run this if you intend to delete the "users" table (clears EVERYTHING)
+DROP TABLE images; -- Run this if you intend to delete the "images" table (clears EVERYTHING)
