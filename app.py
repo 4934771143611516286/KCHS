@@ -9,10 +9,10 @@ app.secret_key = 'your_secret_key_here'  # Replace with a real secret key
 
 # Setup database connection
 db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="your_db_password",  # Replace with your actual MySQL password
-    database="your_db_name"
+    host="138.28.162.15",
+    user="sitrin1",
+    password='comp348',  # Replace with your actual MySQL password
+    database="kchsdb"
 )
 cursor = db.cursor(dictionary=True)
 
@@ -32,7 +32,9 @@ def home():
     if session.get('user_id'):
         flash('You are already logged in.', 'info')
         return redirect(url_for('photos'))
-    return redirect(url_for('login'))
+    cursor.execute("SELECT * FROM images")
+    photos = cursor.fetchall()
+    return render_template('home.html',photos=photos)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -88,7 +90,13 @@ def login():
 def logout():
     session.clear()
     flash('You have been logged out. Redirecting to login...', 'info')
-    return redirect(url_for('login'))
+    return redirect(url_for('home'))
+
+@app.route('/home')
+def home_page():
+    cursor.execute("SELECT * FROM images")
+    photos = cursor.fetchall()
+    return render_template('home.html', photos=photos)
 
 @app.route('/photos', methods=['GET', 'POST'])
 def photos():
