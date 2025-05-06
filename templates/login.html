@@ -46,7 +46,7 @@
             width: 80%;
             border-radius: 8px;
             font-weight: bold;
-            transition: opacity 1s ease-out; /* 🚀 Fade smoothly */
+            transition: opacity 1s ease-out;
         }
         .flash.success {
             background-color: #d4edda;
@@ -89,6 +89,19 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        a.home-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 30px;
+            background-color: #333;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        a.home-button:hover {
+            background-color: #555;
+        }
     </style>
 </head>
 <body>
@@ -114,6 +127,9 @@
         </form>
 
         <p>Don't have an account? <a href="/register">Register here</a>.</p>
+
+        <!-- Back to Home Button -->
+        <a href="/home" class="home-button">← Back to Home</a>
     </div>
 
     <!-- Fullpage Spinner Overlay -->
@@ -143,12 +159,12 @@
             setTimeout(function() {
                 const flashMessages = document.querySelectorAll('.flash');
                 flashMessages.forEach(function(flash) {
-                    flash.style.opacity = '0'; // Fade it out
+                    flash.style.opacity = '0';
                     setTimeout(function() {
-                        flash.style.display = 'none'; // Fully remove after fade
-                    }, 1000); // wait for fade out
+                        flash.style.display = 'none';
+                    }, 1000);
                 });
-            }, 4000); // Start after 4 seconds
+            }, 4000);
         });
     </script>
 </body>
