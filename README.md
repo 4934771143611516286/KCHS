@@ -73,5 +73,5 @@ In console:
 If you see mysql> at the bottom, you know it’s working.
 
 ADD NEW USER TO LOGIN:
-Mysql> INSERT INTO users (username, password_hash)
-	->  VALUES (‘[your username here]’,’[your password here]’);
+- Mysql> INSERT INTO users (username, password_hash)
+- 	-> VALUES (‘[your username here]’,’[your password here]’);
