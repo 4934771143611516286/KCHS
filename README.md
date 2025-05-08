@@ -64,13 +64,14 @@ NOTES:
 
 KCHS Project - How to Enter the Database
 ===========================================
-[underlined parts are what you need to enter.]
+(underlined parts are what you need to enter.)
 In console:
 - ssh sitrin1@138.28.162.15
 - password: comp348
+      (If the cursor is in front of a $, you know it's working.)
 - mysql -u sitrin1 -h 138.28.162.15 -p
     - Enter password: comp348
-If you see mysql> at the bottom, you know it’s working.
+         (If you see mysql> at the bottom, you know it’s working.)
 
 ADD NEW USER TO LOGIN:
 - Mysql> INSERT INTO users (username, password_hash)
