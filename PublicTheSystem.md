@@ -104,9 +104,8 @@ https://www.knoxhistory.org/gallery/home
 ```
 
 You can now visit:
-- `/gallery/login` to log in
-- `/gallery/register` to create accounts
 - `/gallery/home` to view the public photo archive
+- `/gallery/login` to log in
 
 ---
 
