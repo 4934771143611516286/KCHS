@@ -61,3 +61,17 @@ NOTES:
 - You must have MySQL server running.
 - Always run "python3 app.py" from the project folder.
 - If any errors occur, check your database setup or file structure.
+
+KCHS Project - How to Enter the Database
+===========================================
+[underlined parts are what you need to enter.]
+In console:
+- ssh sitrin1@138.28.162.15
+- password: comp348
+- mysql -u sitrin1 -h 138.28.162.15 -p
+    - Enter password: comp348
+If you see mysql> at the bottom, you know it’s working.
+
+ADD NEW USER TO LOGIN:
+Mysql> INSERT INTO users (username, password_hash)
+	->  VALUES (‘[your username here]’,’[your password here]’);
